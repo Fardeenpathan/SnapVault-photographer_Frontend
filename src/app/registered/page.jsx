@@ -47,6 +47,10 @@ export default function RegisteredPage() {
       localStorage.setItem("accessToken", data.accessToken);
     }
 
+        if(data.user){
+      localStorage.setItem("user", JSON.stringify(data.user));
+    }
+
     if (data.user?.isSubscribed) {
       router.push("/dashboard");
     } else {

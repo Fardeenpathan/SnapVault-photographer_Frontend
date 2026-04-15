@@ -8,10 +8,12 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+
   const LoginHandle = async (e) => {
     e.preventDefault();
-
-    const res = await fetch(
+    // console.log("error", error);
+   try{
+     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
       {
         method: "POST",
@@ -25,7 +27,7 @@ export default function LoginForm() {
         }),
       },
     );
-
+  
     const data = await res.json();
 
     if (!res.ok) {
@@ -35,12 +37,19 @@ export default function LoginForm() {
       localStorage.setItem("accessToken", data.accessToken);
     }
 
-    if(data.user.isSubscribed){
-      router.push("/dashboard");
-    }else{
-      router.push("/payment");
+    if(data.user){
+      localStorage.setItem("user", JSON.stringify(data.user));
     }
 
+    if (data.user?.isSubscribed) {
+      router.push("/dashboard");
+    } else {
+      router.push("/payment");
+    }
+   }catch(error){
+ console.error("Login error:", error.message);
+ alert(error.message);
+   }
   };
 
   return (
@@ -74,6 +83,7 @@ export default function LoginForm() {
             value={password}
           />
         </div>
+
         <button
           type="submit"
           className="cursor-pointer py-2 px-10 rounded-lg bg-blue-600 hover:bg-blue-700 mt-2 text-white"
